@@ -18,6 +18,8 @@
 #define ALTERNATING_DELAY 5
 #define STROBE_DELAY 50
 
+#define RUN_TIME 20000 /* 20 seconds */
+
 CRGB leds[NUM_LEDS];
 
 int redLookup[CYLON_EYE_HALF_WIDTH];
@@ -33,15 +35,17 @@ void setup() {
 
 void loop()
 {
-  strobe(100);
-  rainbow(2048);
-  police_lights(50);
-  fire_random_alternating(50);
-  cylon(50);
+  strobe(RUN_TIME);
+  rainbow(RUN_TIME);
+  police_lights(RUN_TIME);
+  fire_random_alternating(RUN_TIME);
+  cylon(RUN_TIME);
 }
 
-void strobe(int iter) {
-  for (int i = 0; i < iter; ++i) {
+void strobe(uint32_t time) {
+  unsigned long now = millis();
+
+  while (millis() - now < time) {
     fill_solid(&(leds[USABLE_START]), USABLE_WIDTH, CRGB::White);
     bumpers();
     FastLED.show();
@@ -54,18 +58,25 @@ void strobe(int iter) {
   }
 }
 
-void rainbow(int iter) {
-  for (int i = 0; i < iter; ++i) {
+void rainbow(uint32_t time) {
+  unsigned long now = millis();
+  uint32_t i = 0;
+
+  while (millis() - now < time) {
     fill_rainbow(&(leds[USABLE_START]), USABLE_WIDTH, i);
     bumpers();
     FastLED.show();
+    ++i;
   }
 }
 
-void police_lights(int iter) {
-  uint32_t red = 0xff0000;
-  uint32_t blue = 0x0000ff;
-  for (int i = 0; i < iter; ++i) {
+void police_lights(uint32_t time) {
+  const uint32_t red = 0xff0000;
+  const uint32_t blue = 0x0000ff;
+
+  unsigned long now = millis();
+
+  while (millis() - now < time) {
     for (int n = USABLE_START; n < USABLE_WIDTH + USABLE_START; ++n )
     {
       if (n < USABLE_HALF) {
@@ -93,8 +104,10 @@ void police_lights(int iter) {
   }
 }
 
-void fire_random_alternating(int iter) {
-  for (int i = 0; i < iter; ++i) {
+void fire_random_alternating(uint32_t time) {
+  unsigned long now = millis();
+
+  while (millis() - now < time) {
     int r = random8();
     int g = random8();
     int b = random8();
@@ -141,9 +154,11 @@ void cylon_eye_piece(int i) {
   }
 }
 
-void cylon(int iter) {
-  for (int n = 0; n < iter; ++n) {
-    for (int i = USABLE_START; i < USABLE_WIDTH; i++) {
+void cylon(uint32_t time) {
+  unsigned long now = millis();
+
+  while (millis() - now < time) {
+    for (uint32_t i = USABLE_START; i < USABLE_WIDTH; i++) {
       cylon_eye_piece(i);
 
       bumpers();
