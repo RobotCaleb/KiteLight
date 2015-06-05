@@ -7,7 +7,7 @@
 #define COLOR_ORDER GRB
 
 #define CYLON_EYE_HALF_WIDTH 10
-#define BUMPER_WIDTH 3
+#define BUMPER_WIDTH 4
 
 #define USABLE_WIDTH (NUM_LEDS - (BUMPER_WIDTH * 2))
 #define USABLE_HALF (USABLE_START + USABLE_WIDTH / 2)
@@ -19,6 +19,7 @@
 #define STROBE_DELAY 50
 
 #define RUN_TIME 20000 /* 20 seconds */
+#define STROBE_RUN_TIME 7500
 
 CRGB leds[NUM_LEDS];
 
@@ -35,7 +36,7 @@ void setup() {
 
 void loop()
 {
-  strobe(RUN_TIME);
+  strobe(STROBE_RUN_TIME);
   rainbow(RUN_TIME);
   police_lights(RUN_TIME);
   fire_random_alternating(RUN_TIME);
@@ -136,11 +137,13 @@ void generate_cylon_lookup_values() {
 }
 
 void bumpers() {
-  for (int i = 0; i < BUMPER_WIDTH; i++) {
+  for (int i = 0; i < BUMPER_WIDTH - 1; i++) {
     leds[NUM_LEDS - 1 - i].setRGB(255, 255, 0);
-
     leds[i].setRGB(0, 255, 255);
   }
+
+  leds[NUM_LEDS - BUMPER_WIDTH].setRGB(0, 0, 0);
+  leds[BUMPER_WIDTH - 1].setRGB(0, 0, 0);
 }
 
 void cylon_eye_piece(int i) {
