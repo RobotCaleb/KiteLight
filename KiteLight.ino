@@ -2,7 +2,7 @@
 
 #define LED_PIN     6
 #define NUM_LEDS    120
-#define BRIGHTNESS  32
+#define BRIGHTNESS  255
 #define LED_TYPE    WS2812B
 #define COLOR_ORDER GRB
 
@@ -16,6 +16,7 @@
 #define CYLON_DELAY  25
 #define POLICE_DELAY 150
 #define ALTERNATING_DELAY 5
+#define STROBE_DELAY 50
 
 CRGB leds[NUM_LEDS];
 
@@ -32,9 +33,33 @@ void setup() {
 
 void loop()
 {
+  strobe(100);
+  rainbow(2048);
   police_lights(50);
   fire_random_alternating(50);
   cylon(50);
+}
+
+void strobe(int iter) {
+  for (int i = 0; i < iter; ++i) {
+    fill_solid(&(leds[USABLE_START]), USABLE_WIDTH, CRGB::White);
+    bumpers();
+    FastLED.show();
+    FastLED.delay(STROBE_DELAY);
+
+    fill_solid(&(leds[USABLE_START]), USABLE_WIDTH, CRGB::Black);
+    bumpers();
+    FastLED.show();
+    FastLED.delay(STROBE_DELAY);
+  }
+}
+
+void rainbow(int iter) {
+  for (int i = 0; i < iter; ++i) {
+    fill_rainbow(&(leds[USABLE_START]), USABLE_WIDTH, i);
+    bumpers();
+    FastLED.show();
+  }
 }
 
 void police_lights(int iter) {
