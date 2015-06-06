@@ -29,18 +29,37 @@ void setup() {
   delay(3000); // power-up safety delay
   FastLED.addLeds<LED_TYPE, LED_PIN, COLOR_ORDER>(leds, NUM_LEDS).setCorrection(TypicalLEDStrip);
   FastLED.setBrightness(BRIGHTNESS);
-  FastLED.setDither(0);
+  FastLED.setDither(1);
 
   generate_cylon_lookup_values();
 }
 
 void loop()
 {
+  plasma(RUN_TIME);
   strobe(STROBE_RUN_TIME);
   rainbow(RUN_TIME);
   police_lights(RUN_TIME);
   fire_random_alternating(RUN_TIME);
   cylon(RUN_TIME);
+}
+
+void plasma(uint32_t time) {
+  unsigned long now = millis();
+  uint8_t n = 0;
+
+  while (millis() - now < time) {
+    for (uint32_t i = 0; i < USABLE_WIDTH; ++i) {
+      // int8_t sin = cubicwave8(n + i * 12);
+      int8_t wave = cubicwave8(i + sin8(n + i) + cos8(n - i));
+      leds[i + USABLE_START] = HeatColor(wave);
+    }
+    n++;
+
+    bumpers();
+    FastLED.show();
+    FastLED.delay(STROBE_DELAY);
+  }
 }
 
 void strobe(uint32_t time) {
